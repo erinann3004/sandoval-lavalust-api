@@ -158,18 +158,18 @@ class Api
         $this->rate_limit_requests  = (int)  (config_item('rate_limit_requests') ?? $this->rate_limit_requests);
         $this->rate_limit_seconds   = (int)  (config_item('rate_limit_seconds') ?? $this->rate_limit_seconds);
 
-        if (empty($this->jwt_secret) || strlen($this->jwt_secret) < 32) {
-            show_error('JWT secret is missing or too weak. Use at least 32 random characters.');
-        }
-        if (empty($this->refresh_token_key) || strlen($this->refresh_token_key) < 32) {
-            show_error('Refresh token key is missing or too weak.');
-        }
-
         $this->handle_cors();
 
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
             http_response_code(204);
             exit;
+        }
+
+        if (empty($this->jwt_secret) || strlen($this->jwt_secret) < 32) {
+            $this->respond_error('JWT_SECRET is missing or too weak. Configure a random value of at least 32 characters.', 500);
+        }
+        if (empty($this->refresh_token_key) || strlen($this->refresh_token_key) < 32) {
+            $this->respond_error('REFRESH_TOKEN_KEY is missing or too weak. Configure a separate random value of at least 32 characters.', 500);
         }
     }
 
